@@ -9,7 +9,7 @@
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
-#define BUTTON_PIN 2
+#define BUTTON_PIN 22
 //#define BUTTON_PIN 35
 
 #include <Bounce2.h>
@@ -21,7 +21,8 @@
 #include <Wire.h>
 #endif
 
-char VERSION[] = "v0.2.0";
+
+char VERSION[] = "v0.3.0";
 
 char device_name[] = "";
 char device_mac[] = "";
@@ -94,12 +95,14 @@ bool state_enter = false;  // State Transition Flag (First Scan)
 int SUB_STATE = 0; // This is garbage, fix it
 
 //0.96" OLED Display
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
-
+//U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
 
 // 1.3" OLED Display from M5Stack "M5 Stick"
 //U8G2_SH1107_64X128_F_4W_HW_SPI u8g2(U8G2_R1, /* cs=*/ 14, /* dc=*/ 27, /* reset=*/ 33);
 
+// 1.3" SH1106 (SDA-17,SCL-16)
+// DSTIKE OLED Watch
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 16, /* data=*/ 17);
 
 
 Bounce debouncer = Bounce(); // Instantiate a Bounce object

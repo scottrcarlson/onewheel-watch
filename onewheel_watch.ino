@@ -1,13 +1,11 @@
 #include "onewheel_watch.h"
 #include "States.h"
 
-
 /*
  * Deep Sleep Wakeup
  */
 void print_wakeup_reason(){
   esp_sleep_wakeup_cause_t wakeup_reason;
-
   wakeup_reason = esp_sleep_get_wakeup_cause();
 
   switch(wakeup_reason)
@@ -73,9 +71,10 @@ void setup()
   delay(100);
   boot_count += 1;
   Serial.begin(115200);
+  u8g2.setI2CAddress(0x3C * 2); //DSTIKE Watch
   u8g2.begin();
   
-  pinMode(LED_BUILTIN, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
   pinMode(A4, INPUT);
 
   debouncer.attach(BUTTON_PIN,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
@@ -290,7 +289,7 @@ void loop()
     stateCharging();
   }
   else if (STATE == ST_SCAN) {
-    digitalWrite(LED_BUILTIN, LOW);;
+    //digitalWrite(LED_BUILTIN, LOW);;
     stateScanning();
   }
 
@@ -298,7 +297,7 @@ void loop()
     stateConnecting();
   }
   else if (STATE == ST_UNLOCK) {
-    digitalWrite(LED_BUILTIN, HIGH);
+    //digitalWrite(LED_BUILTIN, HIGH);
     stateUnlock();
   }
   else if (STATE == ST_DASH_1) {
@@ -336,6 +335,7 @@ void loop()
   }
     
   state_enter = false;
-  battery_value = analogRead(A4);
+  //battery_value = analogRead(A4);
+  battery_value = 0;
   delay(25);
 }
