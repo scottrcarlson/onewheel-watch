@@ -16,40 +16,7 @@ int button_super_long_prev = false;
 bool button_pressed = false;
 
 void buttonUpdate() {
-  //Serial.println(touchRead(T2));
-  /*if (touchRead(T2) < threshold_rise) {
-   threshold_on_count += 1;
-  if (threshold_on_count > 1) {
-    threshold_on_count = 0;
-     button_detected = true;
-  }
-   }
-   else if (touchRead(T2) > threshold_fall) {
-     button_detected = false;
-     threshold_on_count = 0;
-   }*/
-   
-  //if(button_detected and not button_prev && (millis() - button_update_timer > 50)){
-  /*if(button_detected and not button_prev) {
-    button_prev = true;
-    button_rose = true;
-    button_fell = false;
-    button_long_timer = millis();
-  }
-  else if (not button_detected) {
-    //button_update_timer = millis();
-    if (button_prev) {
-      button_fell = true;
-      button_rose = false;
-    }
-    button_prev = false;
-    button_long_timer = millis();
-    button_long = false;
-    button_super_long_prev = false;
-    button_long_prev = false;
-  }*/
-
-  debouncer.update();
+  /*debouncer.update();
   if(debouncer.fell()) {
     button_pressed = true;
     button_prev = true;
@@ -71,7 +38,7 @@ void buttonUpdate() {
     button_super_long_prev = false;
     button_long_prev = false;
     //Serial.println("Fell");
-  }
+  }*/
 
   if (not button_pressed) button_long_timer = millis();
 
@@ -87,7 +54,6 @@ void buttonUpdate() {
 
 bool buttonRose() {
   if (button_rose) {
-      
     button_rose = false;
     return true;
   }

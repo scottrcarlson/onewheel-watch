@@ -12,11 +12,11 @@ void stateFactory()
       u8g2.drawStr(0,45, " press to scan"); 
   }
    
-   if ( buttonRose() ) { // Rising Edge
+   if ( btn_rock_up.rose()) { // Rising Edge
      pressed = true;
      buttonPressTimeStamp = millis();
    }
-   else if ( buttonFell() ) {
+   else if ( btn_rock_up.fell() ) {
      if (pressed) {
         Serial.printf("Press\n");
      }
@@ -37,11 +37,11 @@ void stateFactory()
   u8g2.drawBox(0,59,bar_width,5);
   u8g2.sendBuffer();
 
-    if (buttonLong()) {
+  if (btn_rock_ct.rose()) {
     Serial.printf("Long Press\n");
     pressed = false;
     STATE = ST_SCAN;
-   }
+  }
 }
 /**************************/
 
@@ -120,8 +120,6 @@ void stateScanning()
     u8g2.setCursor(0,0);
     u8g2.printf("ow wrist %s", VERSION);
     u8g2.drawStr(0, 10, "locating board");
-    u8g2.setCursor(0,20);
-    u8g2.printf("boot count %d", boot_count);
     u8g2.sendBuffer();
   }
   row = 0;
@@ -456,18 +454,24 @@ void stateDash1() {
       u8g2.sendBuffer();
      }
 
-     buttonUpdate();
-     if (buttonLong() ) {
+     //buttonUpdate();
+     if (btn_rock_ct.rose()) {
         STATE = ST_DASH_2;
      }
-     if (buttonRose() ) {
+     if (btn_rock_up.rose() ) {
         if (SUB_STATE == 0) SUB_STATE = 1;
         else SUB_STATE = 0;
         u8g2.setDrawColor(0);// Black
         u8g2.drawBox(0,18,128,30); 
         u8g2.setDrawColor(1);// White
      }
-
+     else if (btn_rock_dn.rose() ) {
+        if (SUB_STATE == 0) SUB_STATE = 1;
+        else SUB_STATE = 0;
+        u8g2.setDrawColor(0);// Black
+        u8g2.drawBox(0,18,128,30); 
+        u8g2.setDrawColor(1);// White
+     }
 
 }
 /**************************/
@@ -476,7 +480,7 @@ void stateDash1() {
 
 
 /**************************
- * DASH 2
+ * DASH 5
  **************************/
 void stateDash5() {
   if (state_enter) {
@@ -505,18 +509,18 @@ void stateDash5() {
     u8g2.sendBuffer();
     //touchUpdate();
    }
-   if (buttonLong() ) {
+   if (btn_rock_ct.rose() ) {
        STATE = ST_DASH_1;
    }
-   if ( buttonRose() ) STATE = ST_DASH_2;
-
+   if (btn_rock_up.rose() ) STATE = ST_DASH_2;
+   else if (btn_rock_dn.rose() ) STATE = ST_DASH_4;
 }
 /**************************/
 
 
 
 /**************************
- * DASH 3
+ * DASH 4
  **************************/
 void stateDash4() {
   if (state_enter) {
@@ -541,17 +545,18 @@ void stateDash4() {
     u8g2.sendBuffer();
   }
 
-  if (buttonLong() ) {
+  if (btn_rock_ct.rose()) {
     STATE = ST_DASH_1;
   }
-  if ( buttonRose() ) STATE = ST_DASH_5;
+  if (btn_rock_up.rose()) STATE = ST_DASH_5;
+  else if (btn_rock_dn.rose()) STATE = ST_DASH_3;
 
 }
 
 
 
 /**************************
- * DASH 4
+ * DASH 3
  **************************/
 void stateDash3() {
   if (state_enter) {
@@ -572,16 +577,16 @@ void stateDash3() {
     u8g2.sendBuffer();
   }
 
-  if (buttonLong() ) {
+  if (btn_rock_ct.rose() ) {
     STATE = ST_DASH_1;
   }
-  if ( buttonRose() ) STATE = ST_DASH_4;
-
+  if ( btn_rock_up.rose() ) STATE = ST_DASH_4;
+  else if (btn_rock_dn.rose()) STATE = ST_DASH_2;
 }
 
 
 /**************************
- * DASH 5
+ * DASH 2
  **************************/
 void stateDash2() {
   if (state_enter) {
@@ -602,10 +607,11 @@ void stateDash2() {
     u8g2.sendBuffer();
   }
 
-  if (buttonLong() ) {
+  if (btn_rock_ct.rose()) {
     STATE = ST_DASH_1;
   }
-  if ( buttonRose() ) STATE = ST_DASH_3;
+  if (btn_rock_up.rose() ) STATE = ST_DASH_3;
+  else if (btn_rock_dn.rose()) STATE = ST_DASH_5;
 
 }
 /* Helper Function

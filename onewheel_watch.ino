@@ -1,5 +1,7 @@
+#include <Adafruit_NeoPixel.h>
 #include "onewheel_watch.h"
 #include "States.h"
+
 
 /*
  * Deep Sleep Wakeup
@@ -65,7 +67,7 @@ void wake_callback(){
     }
 };
 
-
+//Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, LED_RGP_PIN, NEO_GRB + NEO_KHZ800);
 void setup()
 {
   delay(100);
@@ -76,18 +78,35 @@ void setup()
   
   //pinMode(LED_BUILTIN, OUTPUT);
   pinMode(A4, INPUT);
-
-  debouncer.attach(BUTTON_PIN,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
-  debouncer.interval(10); // Use a debounce interval of 25 milliseconds
+  pinMode(LED_BACK_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(LED_BACK_PIN, HIGH);
   
-  BLEDevice::init("");
-  BLEDevice::setPower(ESP_PWR_LVL_P9);    // Max TX Power
+  btn_rock_up.attach(ROCKER_UP_PIN,INPUT_PULLUP); //Attach the debouncer to a pin with INPUT_PULLUP mode
+  btn_rock_up.interval(10);                       // Use a debounce interval of 10 milliseconds
 
-  pBLEScan = BLEDevice::getScan();        //create new scan
+  btn_rock_dn.attach(ROCKER_DN_PIN,INPUT_PULLUP); //Attach the debouncer to a pin with INPUT_PULLUP mode
+  btn_rock_dn.interval(10);                       // Use a debounce interval of 10 milliseconds
+
+  btn_rock_ct.attach(ROCKER_PUSH_PIN,INPUT_PULLUP); //Attach the debouncer to a pin with INPUT_PULLUP mode
+  btn_rock_ct.interval(10);         
+  
+  btn_left_top.attach(LEFT_TOP_BTN_PIN,INPUT_PULLUP); //Attach the debouncer to a pin with INPUT_PULLUP mode
+  btn_left_top.interval(10);    
+
+  btn_left_bot.attach(LEFT_BOT_BTN_PIN,INPUT_PULLUP); //Attach the debouncer to a pin with INPUT_PULLUP mode
+  btn_left_bot.interval(10);    
+
+  
+  // Use a debounce interval of 10 milliseconds
+  BLEDevice::init("");
+  BLEDevice::setPower(ESP_PWR_LVL_P9);          // Max TX Power
+
+  pBLEScan = BLEDevice::getScan();              //create new scan
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
-  pBLEScan->setActiveScan(true);          //active scan uses more power, but get results faster
+  pBLEScan->setActiveScan(true);                //active scan uses more power, but get results faster
   pBLEScan->setInterval(100);
-  pBLEScan->setWindow(99);                // less or equal setInterval value
+  pBLEScan->setWindow(99);                      // less or equal setInterval value
 
   //Recover from Deep Sleep
   print_wakeup_reason();
@@ -209,16 +228,74 @@ static void notifyCallback( BLERemoteCharacteristic* pBLERemoteCharacteristic, u
     ow_status_code = pData[0];
     unpackStatusCode();
   }
+
+  //neopixel
+  //strip.begin();
+  //strip.show(); // Initialize all pixels to 'off'
+}
+
+void soundone() {
+  unsigned char i,j;
+  for(i=0;i<5;i++) {
+    for(i=0;i<200;i++) {
+      digitalWrite(BUZZER_PIN,HIGH);
+      delay(1);//Change this could adjust voice
+      digitalWrite(BUZZER_PIN,LOW);
+      delay(1);
+    }
+    for(i=0;i<100;i++) {
+      digitalWrite(BUZZER_PIN,HIGH);
+      delay(2);
+      digitalWrite(BUZZER_PIN,LOW);
+      delay(2);
+    }
+  }
+}
+void soundtwo(){
+  unsigned char i,j;
+  for(i=0;i<5;i++) {
+    for(i=0;i<100;i++) {
+      digitalWrite(BUZZER_PIN,HIGH);
+      delay(2);//Change this could adjust voice
+      digitalWrite(BUZZER_PIN,LOW);
+      delay(2);
+    }
+    for(i=0;i<200;i++) {
+      digitalWrite(BUZZER_PIN,HIGH);
+      delay(1);
+      digitalWrite(BUZZER_PIN,LOW);
+      delay(1);
+    }
+  }
 }
 
 void loop()
 {
+  //strip.clear();
   timerWrite(wdTimer, 0); //reset watchdog timer (feed the beast)
-  //touchUpdate();
-  buttonUpdate();
-  if (buttonSuperLong()) {     //Deep Sleep on Super Long Touch
-    STATE = ST_DEEP_SLEEP;
+  btn_rock_up.update();
+  btn_rock_dn.update();
+  btn_rock_ct.update();
+  btn_left_top.update();
+  btn_left_bot.update();
+
+  if (btn_left_top.rose()) {
+    digitalWrite(LED_BACK_PIN, LOW);
+    //strip.setPixelColor(0, strip.Color(0, 0, 0));
+    //strip.show();
+    soundone();
   }
+
+  if (btn_left_bot.rose()) {
+    digitalWrite(LED_BACK_PIN, HIGH);
+    //strip.setPixelColor(0, strip.Color(50, 0, 50));
+    //strip.show();
+    soundtwo();
+  }
+    
+  /*if (buttonSuperLong()) {     //Deep Sleep on Super Long Touch
+    STATE = ST_DEEP_SLEEP;
+  }*/
 
   if (connected)  {
     idle_last_update = millis();

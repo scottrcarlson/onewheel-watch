@@ -9,7 +9,16 @@
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
-#define BUTTON_PIN 22
+#define LED_BACK_PIN 27
+#define LED_RGP_PIN 33
+#define BUZZER_PIN 32
+#define ROCKER_UP_PIN 19
+#define ROCKER_DN_PIN 5
+#define ROCKER_PUSH_PIN 18
+#define LEFT_TOP_BTN_PIN 22
+#define LEFT_BOT_BTN_PIN 23
+
+//#define BUTTON_PIN 22
 //#define BUTTON_PIN 35
 
 #include <Bounce2.h>
@@ -105,7 +114,11 @@ int SUB_STATE = 0; // This is garbage, fix it
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 16, /* data=*/ 17);
 
 
-Bounce debouncer = Bounce(); // Instantiate a Bounce object
+Bounce btn_rock_up = Bounce(); // Instantiate a Bounce object
+Bounce btn_rock_dn = Bounce(); // Instantiate a Bounce object
+Bounce btn_rock_ct = Bounce(); // Instantiate a Bounce object
+Bounce btn_left_top = Bounce(); // Instantiate a Bounce object
+Bounce btn_left_bot = Bounce(); // Instantiate a Bounce object
 unsigned long buttonPressTimeStamp;
 bool pressed = false;
 int bling_press = 5;
